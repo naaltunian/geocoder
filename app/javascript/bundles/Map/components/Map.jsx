@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
+import axios from 'axios';
 
 export default class Map extends React.Component {
   componentDidMount() {
@@ -42,6 +43,7 @@ export default class Map extends React.Component {
   createMap = (mapOptions, geolocationOptions) => {
     this.map = new mapboxgl.Map(mapOptions);
     const map = this.map;
+    const { lat, lng } = map.getCenter();
     map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: geolocationOptions,
@@ -53,7 +55,7 @@ export default class Map extends React.Component {
         'places',
         {
           type: 'geojson',
-          data: `/places.json`
+          data: `/places.json?lat=${lat}&lng=${lng}`
         }
       );
       map.addLayer({ id: 'places', type: 'circle', source: 'places'});
@@ -75,7 +77,16 @@ export default class Map extends React.Component {
       map.on('mouseleave', 'places', () => {
         map.getCanvas().style.cursor = '';
       });
+      map.on('moveend', () => { this.fetchPlaces() });
     });
+  }
+
+  fetchPlaces = () => {
+    const map = this.map;
+    const { lat, lng } = map.getCenter();
+    axios.get(`/places.json?lat=${lat}&lng=${lng}`)
+      .then((response) => { map.getSource('places').setData(response.data) })
+      .catch((error) => { console.log(error) });
   }
 
   render() {
