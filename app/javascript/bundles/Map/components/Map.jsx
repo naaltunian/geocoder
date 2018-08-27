@@ -4,15 +4,50 @@ import mapboxgl from 'mapbox-gl';
 export default class Map extends React.Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiYW5keXdlaXNzMTk4MiIsImEiOiJIeHpkYVBrIn0.3N03oecxx5TaQz7YLg2HqA'
-    this.createMap();
+    let { coordinates } = this.props;
+    const mapOptions = {
+      container: this.mapContainer,
+      style: `mapbox://styles/mapbox/streets-v9`,
+      zoom: 12,
+      center: coordinates
+    };
+    const geolocationOptions = {
+      enableHighAccuracy: true,
+      maximumAge        : 30000,
+      timeout           : 27000
+    };
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        // success callback
+        (position) => {
+          coordinates = [
+                          position.coords.longitude,
+                          position.coords.latitude
+                        ];
+          document.getElementById("long")
+                  .innerHTML = coordinates[0];
+          document.getElementById("lat")
+                  .innerHTML = coordinates[1];
+          mapOptions.center = coordinates;
+          this.createMap(mapOptions, geolocationOptions);
+        },
+        // failure callback
+        () => { this.createMap(mapOptions, geolocationOptions) },
+        // options
+        geolocationOptions
+      );
+    }
   }
 
-  createMap = () => {
-    this.map = new mapboxgl.Map({
-      container: this.mapContainer,
-      style: `mapbox://styles/mapbox/streets-v9`
-    });
+  createMap = (mapOptions, geolocationOptions) => {
+    this.map = new mapboxgl.Map(mapOptions);
     const map = this.map;
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: geolocationOptions,
+        trackUserLocation: true
+      })
+    );
     map.on('load', (event) => {
       map.addSource(
         'places',

@@ -1,7 +1,10 @@
 class PlacesController < ApplicationController
   def index
     respond_to do |format|
-      format.html
+      format.html do
+        @coordinates = request.location.coordinates.reverse
+        @coordinates = [0.0, 0.0] if @coordinates.empty?
+      end
       format.json do
         @places = Place.all
         render json:  {
