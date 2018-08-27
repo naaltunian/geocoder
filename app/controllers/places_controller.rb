@@ -1,8 +1,4 @@
 class PlacesController < ApplicationController
-  def show
-    @place = Place.find(params[:id])
-  end
-
   def index
     respond_to do |format|
       format.html do
@@ -10,7 +6,7 @@ class PlacesController < ApplicationController
         @coordinates = [0.0, 0.0] if @coordinates.empty?
       end
       format.json do
-        @places = Place.all
+        @places = Place.near([params[:lat], params[:lng]], 50)
         render json:  {
                         type: "FeatureCollection",
                         features: @places.map do |place|
@@ -30,4 +26,9 @@ class PlacesController < ApplicationController
       end
     end
   end
+
+  def show
+    @place = Place.find(params[:id])
+  end
+
 end
