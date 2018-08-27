@@ -1,0 +1,25 @@
+<%= form_with(model: place) do |form| %>
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, class: "text_input" %>
+  </div>
+  <div>
+    <%= form.label :street %>
+    <%= form.text_field :street, class: "text_input" %>
+  </div>
+  <div>
+    <%= form.label :city %>
+    <%= form.text_field :city, class: "text_input" %>
+  </div>
+  <div>
+    <%= form.label :state %>
+    <%= form.text_field :state, class: "text_input" %>
+  </div>
+  <div>
+    <%= form.label :country %>
+    <%= form.text_field :country, class: "text_input" %>
+  </div>
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,10 @@
+document.getElementById("notice").innerHTML="<%= @place.name %> created!"
+window.map.fetchPlaces();
+window.map.flyTo(
+  <%= @place.longitude %>,
+  <%= @place.latitude %>
+);
+var textInput = document.getElementsByClassName('text_input');
+for (let i = 0; i < textInput.length; i ++){
+  textInput[i].value = "";
+}
