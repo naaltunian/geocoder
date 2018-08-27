@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
-  resources :places, only: [:index]
+  resources :places, only: [:index, :show]
   root 'places#index'
 end
