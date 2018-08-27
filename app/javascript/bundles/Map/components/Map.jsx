@@ -10,13 +10,44 @@ export default class Map extends React.Component {
       style: `mapbox://styles/mapbox/streets-v9`,
       zoom: 12,
       center: coordinates
+    };
+    const geolocationOptions = {
+      enableHighAccuracy: true,
+      maximumAge        : 30000,
+      timeout           : 27000
+    };
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        // success callback
+        (position) => {
+          coordinates = [
+                          position.coords.longitude,
+                          position.coords.latitude
+                        ];
+          document.getElementById("long")
+                  .innerHTML = coordinates[0];
+          document.getElementById("lat")
+                  .innerHTML = coordinates[1];
+          mapOptions.center = coordinates;
+          this.createMap(mapOptions, geolocationOptions);
+        },
+        // failure callback
+        () => { this.createMap(mapOptions, geolocationOptions) },
+        // options
+        geolocationOptions
+      );
     }
-    this.createMap(mapOptions);
   }
- 
-  createMap = mapOptions => {
+
+  createMap = (mapOptions, geolocationOptions) => {
     this.map = new mapboxgl.Map(mapOptions);
     const map = this.map;
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: geolocationOptions,
+        trackUserLocation: true
+      })
+    );
     map.on('load', (event) => {
       map.addSource(
         'places',
