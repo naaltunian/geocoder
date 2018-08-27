@@ -57,6 +57,24 @@ export default class Map extends React.Component {
         }
       );
       map.addLayer({ id: 'places', type: 'circle', source: 'places'});
+      map.on('click', 'places', (e) => {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var name = e.features[0].properties.name;
+        var id = e.features[0].properties.id;
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(`<a href="/places/${id}">${name}</a>`)
+            .addTo(map);
+      });
+      map.on('mouseenter', 'places', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'places', () => {
+        map.getCanvas().style.cursor = '';
+      });
     });
   }
 
