@@ -1,3 +1,8 @@
 <h1><%= @place.name %></h1>
-
 <%= link_to "All Places", places_path %>
+
+<%= react_component 'Map',
+    props: {
+      coordinates: [@place.longitude, @place.latitude],
+      centerOnUser: false
+    } %>
